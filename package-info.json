@@ -1,0 +1,8 @@
+{
+  "name": "amoeba-dsp",
+  "displayname": "Amoeba DSP",
+  "version": "1.0.0",
+  "description": "Ten organic speaker-aware Max/MSP spatial processors with 1–18 discrete outputs and radial speaker geometry editing.",
+  "tags": ["audio", "max", "msp", "multichannel", "spatial-audio", "ambisonics", "speaker-layout", "radial", "organic", "generative", "granular", "physical-modeling"],
+  "max_version_min": "8.2.0"
+}

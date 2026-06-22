@@ -813,6 +813,7 @@ void* newObject(t_symbol*, long argc, t_atom* argv)
     x->outlet_count = x->output_attribute = std::clamp(requested, 1L, 18L);
     const long flags = JBOX_DRAWFIRSTIN | JBOX_NODRAWBOX | JBOX_DRAWINLAST | JBOX_TRANSPARENT | JBOX_GROWBOTH | JBOX_DRAWBACKGROUND;
     jbox_new(reinterpret_cast<t_jbox*>(x), flags, argc, argv); x->object.z_box.b_firstin = reinterpret_cast<t_object*>(x); dsp_setupjbox(reinterpret_cast<t_pxjbox*>(x), 1);
+    x->object.z_misc |= Z_NO_INPLACE;
     for (long i = 0; i < x->outlet_count; ++i) outlet_new(reinterpret_cast<t_object*>(x), "signal");
     x->parameters = myseq::amoeba::defaultParameters(); x->center_x = x->center_y = 0.0; x->display_activity = 0.0; x->input_connected = 0; x->auto_enabled = 1; x->freeze_enabled = 0; x->bypass_enabled = 0; x->tooltips_enabled = 1; x->selected_speaker = 0; x->active_character = 0; x->active_preset = -1; x->preset_store_mode = 0; x->drag_target = kDragNone; x->queue_warning_shown = 0; x->rng = 0xa511e9b3u ^ static_cast<std::uint32_t>(kAmoebaKind); x->dsp_reset_serial = 0; x->tooltip = {};
     for (double& peak : x->display_peak) peak = 0.0;

@@ -79,5 +79,22 @@ int main()
         for (std::size_t i = 0; i < frames; ++i)
             require(std::abs(bypass_output[channel][i] - input[i] * expected_ratio) < 1.0e-12, "equal-power bypass");
 
+    // Max may offer the input vector as an in-place output vector. The engine
+    // must read each input sample before overwriting the aliased output frame.
+    AmoebaEngine aliased(Kind::Orbit, 4);
+    aliased.setSampleRate(48000.0);
+    std::vector<double> aliased_input = input;
+    std::array<std::vector<double>, 3> aliased_extra;
+    std::array<double*, 4> aliased_outputs {{aliased_input.data(), nullptr, nullptr, nullptr}};
+    for (std::size_t channel = 0; channel < aliased_extra.size(); ++channel) {
+        aliased_extra[channel].resize(frames);
+        aliased_outputs[channel + 1] = aliased_extra[channel].data();
+    }
+    aliased.process(aliased_input.data(), aliased_outputs.data(), frames, 4, true, false, false);
+    double aliased_energy = 0.0;
+    for (const auto& channel : aliased_extra)
+        for (double sample : channel) aliased_energy += sample * sample;
+    require(aliased_energy > 1.0e-6, "in-place input alias remains audible");
+
     return 0;
 }

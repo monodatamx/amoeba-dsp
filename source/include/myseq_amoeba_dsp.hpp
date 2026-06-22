@@ -234,13 +234,15 @@ public:
     {
         if (!outputs) return;
         const std::size_t channels = std::clamp<std::size_t>(output_count, 1, speaker_count_);
-        for (std::size_t channel = 0; channel < channels; ++channel)
-            if (outputs[channel]) std::fill(outputs[channel], outputs[channel] + frames, 0.0);
 
         const double level = parameters_[11] * 1.3;
         const double bypass_gain = level / std::sqrt(static_cast<double>(channels));
         for (std::size_t frame = 0; frame < frames; ++frame) {
+            // Read before clearing the current output frame. Max may alias the
+            // input vector with an output vector when in-place DSP is allowed.
             const double dry = input_connected && input ? input[frame] : 0.0;
+            for (std::size_t channel = 0; channel < channels; ++channel)
+                if (outputs[channel]) outputs[channel][frame] = 0.0;
             if (bypass) {
                 for (std::size_t channel = 0; channel < channels; ++channel)
                     if (outputs[channel]) outputs[channel][frame] = dry * bypass_gain;
